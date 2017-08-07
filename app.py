@@ -40,13 +40,35 @@ def deal_cards():
         cards.remove(selection2)
         
 def playing_card(player_hand):
-    chosen_card = raw_input('Which card would you like to play? ')
-    while chosen_card not in player_hand:
-        print 'Please choose a card in your hand.'
+    move_choice = raw_input('Would you like to play or trade a card? (Type "play" or "trade") ')
+    if move_choice == 'play':
         chosen_card = raw_input('Which card would you like to play? ')
-    else:
-        player_hand.remove(chosen_card)
-        append_player_stack(chosen_card)
+        while chosen_card not in player_hand:
+            print 'Please choose a card in your hand.'
+            chosen_card = raw_input('Which card would you like to play? ')
+        else:
+            player_hand.remove(chosen_card)
+            append_player_stack(chosen_card)
+    if move_choice == 'trade':
+        trade_card = raw_input('Which card would you like to trade away? ')
+        while trade_card not in player_hand:
+            print 'Please choose a card in your hand.'
+            trade_card = raw_input('Which card would you like to trade away? ')
+        else:
+            player_hand.remove(trade_card)
+            append_trade_stack(trade_card)
+
+def append_trade_stack(trade_card):
+    if 'Yellow' in trade_card:
+        trade_yellow_stack.append(trade_card)
+    if 'Blue' in trade_card:
+        trade_blue_stack.append(trade_card)
+    if 'White' in trade_card:
+        trade_white_stack.append(trade_card)
+    if 'Green' in trade_card:
+        trade_green_stack.append(trade_card)
+    if 'Red' in trade_card:
+        trade_red_stack.append(trade_card)
 
 def append_player_stack(chosen_card):
     if 'Yellow' in chosen_card:
