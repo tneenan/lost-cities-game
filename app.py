@@ -75,8 +75,11 @@ def computer_play_card(opponent_hand):
         opponent_hand.remove(trade_card)
     else: # <- computer is playing
         chosen_card = random.choice(opponent_hand)
-        append_player_stack(chosen_card, 'opponent')
-
+        failure = append_player_stack(chosen_card, 'opponent')
+        while failure == True:
+            chosen_card = random.choice(opponent_hand)
+            failure = append_player_stack(chosen_card, 'opponent')
+        
 def append_trade_stack(trade_card):
     color, number = trade_card.split(' ')
     if color in colors:
@@ -95,10 +98,11 @@ def append_player_stack(chosen_card, player_or_opponent):
             color2, number2 = player_stack[-1].split(' ')
             if number2 >= number and number2 != 'X':
                 print 'Unacceptable move. Please try again.'
+                if player_or_opponent == 'opponent':
+                    return True
             else:
                 player_stack.append(chosen_card)
                 hand.remove(chosen_card)
-                
         else:
             player_stack.append(chosen_card)
             hand.remove(chosen_card)
@@ -121,6 +125,23 @@ def draw_card(player_hand):
                     pickup_card = desired_stack[-1]
                     player_hand.append(pickup_card)
                     desired_stack.remove(pickup_card)
+
+def computer_draw_card(opponent_hand):
+    move_choice = random.randint(0,2)
+    if move_choice == 0 and trading_board != [[],[],[],[],[]]:
+        pickup_color = random.choice(colors)
+        desired_stack = determine_stack(pickup_color)
+        while not desired_stack:
+            pickup_color = random.choice(colors)
+            desired_stack = determine_stack(pickup_color)
+        else:
+            pickup_card = desired_stack[-1]
+            opponent_hand.append(pickup_card)
+            desired_stack.remove(pickup_card)
+    else:
+        selection = random.choice(cards)
+        opponent_hand.append(selection)
+        cards.remove(selection)
         
 def determine_stack(pickup_color):
     if pickup_color in colors:
@@ -129,6 +150,8 @@ def determine_stack(pickup_color):
         return desired_stack
     
 def show_board(opponent_board, trading_board, game_board):
+    print
+    print 'Cards left: {}'.format(len(cards))
     print
     print "Opponent's board: {}".format(opponent_board)
     print
@@ -145,6 +168,7 @@ while len(cards) > 0:
     playing_card(player_hand)
     draw_card(player_hand)
     computer_play_card(opponent_hand)
+    computer_draw_card(opponent_hand)
     print
     print '-' * 100
     print
