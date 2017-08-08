@@ -12,6 +12,7 @@ trade_blue_stack = []
 trade_white_stack = []
 trade_green_stack = []
 trade_red_stack = []
+colors = ['Yellow', 'Blue', 'White', 'Green', 'Red']
 
 trading_board = [trade_yellow_stack, trade_blue_stack, trade_white_stack,
                  trade_green_stack, trade_red_stack]
@@ -59,16 +60,11 @@ def playing_card(player_hand):
             
 
 def append_trade_stack(trade_card):
-    if 'Yellow' in trade_card:
-        trade_yellow_stack.append(trade_card)
-    if 'Blue' in trade_card:
-        trade_blue_stack.append(trade_card)
-    if 'White' in trade_card:
-        trade_white_stack.append(trade_card)
-    if 'Green' in trade_card:
-        trade_green_stack.append(trade_card)
-    if 'Red' in trade_card:
-        trade_red_stack.append(trade_card)
+    color, number = trade_card.split(' ')
+    if color in colors:
+        color_stack = 'trade_{}_stack'.format(color.lower())
+        trade_stack = eval(color_stack)
+        trade_stack.append(trade_card)
 
 def append_player_stack(chosen_card):
     if 'Yellow' in chosen_card:
@@ -134,34 +130,27 @@ def append_player_stack(chosen_card):
 
 def draw_card(player_hand):
     while len(player_hand) < 8:
-        if trading_board != [[],[],[],[],[]]:
-            trading = raw_input('Would you like to pick a card from the middle (yes or no)? ')
-            if trading == 'yes':
+        trading = raw_input('Would you like to pick a card from the middle (yes or no)? ')
+        if trading_board == [[],[],[],[],[]] or trading == 'no':
+            selection = random.choice(cards)
+            player_hand.append(selection)
+        if trading_board != [[],[],[],[],[]] and trading == 'yes':
                 pickup_color = raw_input('Which color would you like? ')
                 desired_stack = determine_stack(pickup_color)
                 while not desired_stack:
                     print 'Please choose a card in the middle.'
                     pickup_color = raw_input('Which color would you like? ')
+                    desired_stack = determine_stack(pickup_color)
                 else:
                     pickup_card = desired_stack[-1]
                     player_hand.append(pickup_card)
                     desired_stack.remove(pickup_card)
-        if trading_board == [[],[],[],[],[]] or trading == 'no':
-            selection = random.choice(cards)
-            player_hand.append(selection)
         
 def determine_stack(pickup_color):
-    if 'Yellow' in pickup_color:
-        desired_stack = trade_yellow_stack
-    if 'Blue' in pickup_color:
-        desired_stack = trade_blue_stack
-    if 'White' in pickup_color:
-        desired_stack = trade_white_stack
-    if 'Green' in pickup_color:
-        desired_stack = trade_green_stack
-    if 'Red' in pickup_color:
-        desired_stack = trade_red_stack
-    return desired_stack
+    if pickup_color in colors:
+        color_stack = 'trade_{}_stack'.format(pickup_color.lower())
+        desired_stack = eval(color_stack)
+        return desired_stack
     
 def show_board(trading_board, game_board):
     print 'Trade: {}'.format(trading_board)
