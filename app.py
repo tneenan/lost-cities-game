@@ -12,7 +12,16 @@ trade_blue_stack = []
 trade_white_stack = []
 trade_green_stack = []
 trade_red_stack = []
+opponent_yellow_stack = []
+opponent_blue_stack = []
+opponent_white_stack = []
+opponent_green_stack = []
+opponent_red_stack = []
 colors = ['Yellow', 'Blue', 'White', 'Green', 'Red']
+
+opponent_board = [opponent_yellow_stack, opponent_blue_stack,
+                  opponent_white_stack, opponent_green_stack,
+                  opponent_red_stack]
 
 trading_board = [trade_yellow_stack, trade_blue_stack, trade_white_stack,
                  trade_green_stack, trade_red_stack]
@@ -48,7 +57,7 @@ def playing_card(player_hand):
             print 'Please choose a card in your hand.'
             chosen_card = raw_input('Which card would you like to play? ')
         else:
-            append_player_stack(chosen_card)
+            append_player_stack(chosen_card, 'player')
     if move_choice == 'trade':
         trade_card = raw_input('Which card would you like to trade away? ')
         while trade_card not in player_hand:
@@ -57,7 +66,16 @@ def playing_card(player_hand):
         else:
             player_hand.remove(trade_card)
             append_trade_stack(trade_card)
-            
+
+def computer_play_card(opponent_hand):
+    move_choice = random.randint(0,2)
+    if move_choice == 1: # <- computer is trading
+        trade_card = random.choice(opponent_hand)
+        append_trade_stack(trade_card)
+        opponent_hand.remove(trade_card)
+    else: # <- computer is playing
+        chosen_card = random.choice(opponent_hand)
+        append_player_stack(chosen_card, 'opponent')
 
 def append_trade_stack(trade_card):
     color, number = trade_card.split(' ')
@@ -66,10 +84,12 @@ def append_trade_stack(trade_card):
         trade_stack = eval(color_stack)
         trade_stack.append(trade_card)
 
-def append_player_stack(chosen_card):
+def append_player_stack(chosen_card, player_or_opponent):
     color, number = chosen_card.split(' ')
+    whose_hand = '{}_hand'.format(player_or_opponent)
+    hand = eval(whose_hand)
     if color in colors:
-        color_stack = 'player_{}_stack'.format(color.lower())
+        color_stack = '{}_{}_stack'.format(player_or_opponent, color.lower())
         player_stack = eval(color_stack)
         if player_stack != []:
             color2, number2 = player_stack[-1].split(' ')
@@ -77,10 +97,11 @@ def append_player_stack(chosen_card):
                 print 'Unacceptable move. Please try again.'
             else:
                 player_stack.append(chosen_card)
-                player_hand.remove(chosen_card)
+                hand.remove(chosen_card)
+                
         else:
             player_stack.append(chosen_card)
-            player_hand.remove(chosen_card)
+            hand.remove(chosen_card)
     
 def draw_card(player_hand):
     while len(player_hand) < 8:
@@ -88,6 +109,7 @@ def draw_card(player_hand):
         if trading_board == [[],[],[],[],[]] or trading == 'no':
             selection = random.choice(cards)
             player_hand.append(selection)
+            cards.remove(selection)
         if trading_board != [[],[],[],[],[]] and trading == 'yes':
                 pickup_color = raw_input('Which color would you like? ')
                 desired_stack = determine_stack(pickup_color)
@@ -106,19 +128,23 @@ def determine_stack(pickup_color):
         desired_stack = eval(color_stack)
         return desired_stack
     
-def show_board(trading_board, game_board):
+def show_board(opponent_board, trading_board, game_board):
+    print
+    print "Opponent's board: {}".format(opponent_board)
+    print
     print 'Trade: {}'.format(trading_board)
-    print 'Game board: {}'.format(game_board)
+    print
+    print 'Your board: {}'.format(game_board)
+    print
     
 print 'Welcome to Lost Cities'
 deal_cards()
 while len(cards) > 0:
     print 'Here is your hand: {}'.format(player_hand)
-    show_board(trading_board, game_board)
+    show_board(opponent_board, trading_board, game_board)
     playing_card(player_hand)
     draw_card(player_hand)
+    computer_play_card(opponent_hand)
     print
     print '-' * 100
     print
-
-show_board(trading_board, game_board)
