@@ -46,6 +46,7 @@ def computer_play_card(opponent_hand):
                 trade_card = random.choice(opponent_hand)
                 append_trade_stack(trade_card)
                 opponent_hand.remove(trade_card)
+                failure = False
         
 def append_trade_stack(trade_card):
     color, number = trade_card.split(' ')
