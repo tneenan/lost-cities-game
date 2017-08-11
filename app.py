@@ -30,6 +30,7 @@ def playing_card(player_hand):
 
 def computer_play_card(opponent_hand):
     move_choice = random.randint(0,2)
+    tries = 0
     if move_choice == 1: # <- computer is trading
         trade_card = random.choice(opponent_hand)
         append_trade_stack(trade_card)
@@ -38,8 +39,13 @@ def computer_play_card(opponent_hand):
         chosen_card = random.choice(opponent_hand)
         failure = append_player_stack(chosen_card, 'opponent')
         while failure == True:
-            chosen_card = random.choice(opponent_hand)
-            failure = append_player_stack(chosen_card, 'opponent')
+            if tries < 6:
+                chosen_card = random.choice(opponent_hand)
+                failure = append_player_stack(chosen_card, 'opponent')
+            else:
+                trade_card = random.choice(opponent_hand)
+                append_trade_stack(trade_card)
+                opponent_hand.remove(trade_card)
         
 def append_trade_stack(trade_card):
     color, number = trade_card.split(' ')
@@ -50,6 +56,7 @@ def append_trade_stack(trade_card):
 
 def append_player_stack(chosen_card, player_or_opponent):
     color, number = chosen_card.split(' ')
+    chosen_card_number = int(number)
     whose_hand = '{}_hand'.format(player_or_opponent)
     hand = eval(whose_hand)
     if color in colors:
@@ -57,10 +64,12 @@ def append_player_stack(chosen_card, player_or_opponent):
         player_stack = eval(color_stack)
         if player_stack != []:
             color2, number2 = player_stack[-1].split(' ')
-            if number2 >= number and number2 != 'X':
-                print 'Unacceptable move. Please try again.'
+            player_stack_number = int(number2)
+            if player_stack_number > chosen_card_number:
                 if player_or_opponent == 'opponent':
                     return True
+                else:
+                    print 'Unacceptable move. Please try again.'
             else:
                 player_stack.append(chosen_card)
                 hand.remove(chosen_card)
@@ -71,11 +80,11 @@ def append_player_stack(chosen_card, player_or_opponent):
 def draw_card(player_hand):
     while len(player_hand) < 8:
         trading = raw_input('Would you like to pick a card from the middle (yes or no)? ')
-        if trading_board == [[],[],[],[],[]] or trading == 'no':
+        if trading_board == [[], [], [], [], []] or trading == 'no':
             selection = random.choice(cards)
             player_hand.append(selection)
             cards.remove(selection)
-        if trading_board != [[],[],[],[],[]] and trading == 'yes':
+        if trading_board != [[], [], [], [], []] and trading == 'yes':
                 pickup_color = raw_input('Which color would you like? ')
                 desired_stack = determine_stack(pickup_color)
                 while not desired_stack:
