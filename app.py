@@ -67,10 +67,8 @@ def append_player_stack(chosen_card, player_or_opponent):
             color2, number2 = player_stack[-1].split(' ')
             player_stack_number = int(number2)
             if player_stack_number > chosen_card_number:
-                if player_or_opponent == 'opponent':
-                    return True
-                else:
-                    print 'Unacceptable move. Please try again.'
+                if player_or_opponent == 'opponent': return True
+                else: print 'Unacceptable move. Please try again.'
             else:
                 player_stack.append(chosen_card)
                 hand.remove(chosen_card)
@@ -98,7 +96,7 @@ def draw_card(player_hand):
                     desired_stack.remove(pickup_card)
 
 def computer_draw_card(opponent_hand):
-    move_choice = random.randint(0,2)
+    move_choice = random.randint(0,1)
     if move_choice == 0 and trading_board != [[],[],[],[],[]]:
         pickup_color = random.choice(colors)
         desired_stack = determine_stack(pickup_color)
@@ -119,6 +117,7 @@ def determine_stack(pickup_color):
         color_stack = 'trade_{}_stack'.format(pickup_color.lower())
         desired_stack = eval(color_stack)
         return desired_stack
+    else: return nil
     
 def show_board(opponent_board, trading_board, game_board):
     print
